@@ -1,2 +1,2 @@
 # OctreeColorQuantizer-opencv
-Color quantization of images using octree (implemented in C++ with OpenCV)
+Color quantization of images using octrees (implemented in C++ with OpenCV)

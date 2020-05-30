@@ -1,0 +1,18 @@
+# http://astyle.sourceforge.net/astyle.html
+--style=allman
+--indent-switches
+--indent=spaces=4
+--indent-col1-comments
+--break-blocks
+--pad-oper
+--pad-header
+--unpad-paren
+--align-pointer=type
+--align-reference=type
+--convert-tabs
+--close-templates
+--break-after-logical
+--ignore-exclude-errors
+--preserve-date
+--formatted
+--suffix=none

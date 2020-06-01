@@ -1,6 +1,5 @@
 #include "octreeColorQuantizer.hpp"
 #include <opencv2/core/mat.hpp>
-#include "utils.hpp"
 
 OctreeColorQuantizer::OctreeColorQuantizer(const cv::Mat& src)
 {
@@ -13,7 +12,7 @@ OctreeColorQuantizer::OctreeColorQuantizer(const cv::Mat& src)
         for (uchar c = 0; c < nbChannels; c++)
             color[c] = pSrcData[i * src.channels() + c];
 
-        m_root.insertColor(color, utils::getColorMortonCode(color));
+        m_root.insertColor(color);
     }
 
     m_sortedNodePtrs = m_root.getActiveChildsPtrs();
@@ -26,7 +25,7 @@ OctreeColorQuantizer::OctreeColorQuantizer(const cv::Mat& src)
 void OctreeColorQuantizer::setPaletteSize(const unsigned int paletteSize)
 {
     for (unsigned int i = 0; i < m_sortedNodePtrs.size(); i++)
-        (i < m_sortedNodePtrs.size() - paletteSize) ? m_sortedNodePtrs[i]->setInPalette(false) : m_sortedNodePtrs[i]->setInPalette(true);
+        m_sortedNodePtrs[i]->setInPalette(i > m_sortedNodePtrs.size() - paletteSize);
 }
 
 void OctreeColorQuantizer::resetPalette() const
@@ -49,7 +48,7 @@ cv::Mat OctreeColorQuantizer::getQuantizedImage(const cv::Mat& src) const
         for (uchar c = 0; c < nbChannels; c++)
             colorSrc[c] = pSrcData[i * src.channels() + c];
 
-        colorOut = m_root.getColor(utils::getColorMortonCode(colorSrc));
+        colorOut = m_root.getQuantizedColor(colorSrc);
 
         for (uchar c = 0; c < nbChannels; c++)
             pQuantizedData[i * quantizedImage.channels() + c] = colorOut[c];

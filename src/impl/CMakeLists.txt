@@ -1,12 +1,14 @@
 set(IMPL_HEADERS
 	headers/utils.hpp
 	headers/octreeNode.hpp
+        headers/octree.hpp
 	headers/octreeColorQuantizer.hpp
 	)
 
 set(IMPL_SOURCES
         src/utils.cpp
         src/octreeNode.cpp
+        src/octree.cpp
         src/octreeColorQuantizer.cpp
 	)
 

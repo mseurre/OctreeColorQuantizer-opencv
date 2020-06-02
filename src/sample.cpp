@@ -1,16 +1,15 @@
 #include "impl/headers/octreeColorQuantizer.hpp"
-#include <opencv2/highgui.hpp>
 #include "impl/headers/utils.hpp"
+
+#include <opencv2/highgui.hpp>
 
 int main(int /*argc*/, char** /*argv*/)
 {
-    // Input image
     const cv::Mat demoPaletteImg = utils::getDemoPaletteImage(600);
 
-    // Generate the octree quantizer
     OctreeColorQuantizer octreeColorQuantizer(demoPaletteImg);
 
-    // Make a quantization palette with only 256 values
+    // Make a quantized palette with only 256 colors
     const unsigned int paletteSize = 256;
     octreeColorQuantizer.setPaletteSize(paletteSize);
 
@@ -19,7 +18,7 @@ int main(int /*argc*/, char** /*argv*/)
     demoPaletteImg.copyTo(originalVsQuantized(cv::Rect({0, 0}, demoPaletteImg.size())));
     octreeColorQuantizer.getQuantizedImage(demoPaletteImg).copyTo(originalVsQuantized(cv::Rect({demoPaletteImg.cols + 1, 0}, demoPaletteImg.size())));
 
-    cv::imshow("Original vs Quantized to " + std::to_string(paletteSize) + " colors", originalVsQuantized);
+    cv::imshow("Original (left) vs Quantized with " + std::to_string(paletteSize) + " colors (right)", originalVsQuantized);
     cv::waitKey();
 
     return 0;

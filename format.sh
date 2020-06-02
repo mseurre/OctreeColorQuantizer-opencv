@@ -1,6 +1,5 @@
 #!/bin/bash
 
-OPTIONS="--options=.astylerc"
 ASTYLE=$(which astyle)
 
 if [ $? -ne 0 ]; then
@@ -20,12 +19,12 @@ fi
 if [ $1 = "all" ]
 then
   echo "Formatting all source code..."
-  astyle --options=.astylerc --recursive "*.cpp" "*.hpp" "*.tpp"
+  astyle --options=.astylerc --recursive "*.cpp" "*.hpp"
   exit $?
 
 elif [ $1 = "check" ]
 then
-  astyle --options=.astylerc --recursive "*.cpp" "*.hpp" "*.tpp" | grep "^Formatted"
+  astyle --options=.astylerc --recursive "*.cpp" "*.hpp" | grep "^Formatted"
   if [ $? -eq 0 ]; then #is eq 0 ==> grep success ==> file formatted ==> anormal
     exit 1
   fi

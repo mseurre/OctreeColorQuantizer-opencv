@@ -1,31 +1,30 @@
 #ifndef OCTREECOLORQUANTIZER_HPP
 #define OCTREECOLORQUANTIZER_HPP
 
-#include "octreeNode.hpp"
+#include "octree.hpp"
 
 /**
- * @brief The OctreeColorQuantizer class which implements the interface between the image and the color quantization
+ * @brief The OctreeColorQuantizer class is the interface between the image and the color quantization
  */
 class OctreeColorQuantizer
 {
 public:
-
     /**
-     * @brief In the constructor, the octree is generated based on a source image
+     * @brief Generate the octree based on a source image
      * @param src : the source image
      */
     OctreeColorQuantizer(const cv::Mat& src);
 
     /**
      * @brief Set the size of the desired quantized palette
-     * @param paletteSize the size of the palette
+     * @param paletteSize : the size of the palette
      */
-    void setPaletteSize(const unsigned int paletteSize);
+    void setPaletteSize(const unsigned long paletteSize);
 
     /**
-     * @brief Use all octree colors as a palette (no quantization)
+     * @brief Use all colors as a palette (no quantization)
      */
-    void resetPalette() const;
+    void resetPalette();
 
     /**
      * @brief Compute the quantized equivalent of a source image (can be different from the image used for generating the octree)
@@ -34,9 +33,14 @@ public:
      */
     cv::Mat getQuantizedImage(const cv::Mat& src) const;
 
+    /**
+     * @brief Compute an image of the palette of colors used for quantization
+     * @return the image of the color palette
+     */
+    cv::Mat getPaletteImage() const;
+
 private:
-    OctreeNode m_root;
-    std::vector<OctreeNode*> m_sortedNodePtrs;
+    impl::Octree m_octree;
 };
 
 #endif // OCTREECOLORQUANTIZER_HPP

@@ -10,28 +10,22 @@ OctreeColorQuantizer::OctreeColorQuantizer(const cv::Mat& src)
     for (unsigned int i = 0; i < src.total(); i++)
     {
         for (uchar c = 0; c < nbChannels; c++)
-            color[c] = pSrcData[i * src.channels() + c];
+            color[c] = pSrcData[i * static_cast<uchar>(src.channels()) + c];
 
-        m_root.insertColor(color);
+        m_octree.insertColor(color);
     }
 
-    m_sortedNodePtrs = m_root.getActiveChildsPtrs();
-    std::sort(m_sortedNodePtrs.begin(), m_sortedNodePtrs.end(), [](const OctreeNode * n1, const OctreeNode * n2)
-    {
-        return n1->getCount() < n2->getCount() ;
-    });
+    resetPalette();
 }
 
-void OctreeColorQuantizer::setPaletteSize(const unsigned int paletteSize)
+void OctreeColorQuantizer::setPaletteSize(const unsigned long paletteSize)
 {
-    for (unsigned int i = 0; i < m_sortedNodePtrs.size(); i++)
-        m_sortedNodePtrs[i]->setInPalette(i > m_sortedNodePtrs.size() - paletteSize);
+    m_octree.makePalette(paletteSize);
 }
 
-void OctreeColorQuantizer::resetPalette() const
+void OctreeColorQuantizer::resetPalette()
 {
-    for (OctreeNode* nPtr : m_sortedNodePtrs)
-        nPtr->setInPalette(true);
+    m_octree.resetPalette();
 }
 
 cv::Mat OctreeColorQuantizer::getQuantizedImage(const cv::Mat& src) const
@@ -46,13 +40,36 @@ cv::Mat OctreeColorQuantizer::getQuantizedImage(const cv::Mat& src) const
     for (unsigned int i = 0; i < src.total(); i++)
     {
         for (uchar c = 0; c < nbChannels; c++)
-            colorSrc[c] = pSrcData[i * src.channels() + c];
+            colorSrc[c] = pSrcData[i * static_cast<uchar>(src.channels()) + c];
 
-        colorOut = m_root.getQuantizedColor(colorSrc);
+        colorOut = m_octree.getQuantizedColor(colorSrc);
 
         for (uchar c = 0; c < nbChannels; c++)
-            pQuantizedData[i * quantizedImage.channels() + c] = colorOut[c];
+            pQuantizedData[i * static_cast<uchar>(quantizedImage.channels()) + c] = colorOut[c];
     }
 
     return quantizedImage;
+}
+
+cv::Mat OctreeColorQuantizer::getPaletteImage() const
+{
+    const std::vector<cv::Vec3b> paletteColors = m_octree.getPaletteColors();
+
+    unsigned long paletteImageSize = paletteColors.size();
+
+    while (std::sqrt(paletteImageSize) != std::floor(std::sqrt(paletteImageSize)))
+        paletteImageSize++;
+
+    paletteImageSize = static_cast<unsigned long>(std::sqrt(paletteImageSize));
+
+    cv::Mat paletteImage = cv::Mat::zeros(paletteImageSize, paletteImageSize, CV_8UC3);
+    uchar* paletteDataPtr = paletteImage.ptr<uchar>(0);
+
+    for (unsigned long i = 0; i < paletteColors.size(); i++)
+    {
+        for (uchar c = 0; c < paletteImage.channels(); c++)
+            paletteDataPtr[i * paletteImage.channels() + c] = paletteColors[i][c];
+    }
+
+    return paletteImage;
 }

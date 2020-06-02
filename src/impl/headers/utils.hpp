@@ -7,21 +7,21 @@ namespace utils
 {
 
 /**
- * @brief Reverse the bits of an uchar (ex : 164(d) <=> 10100100(b) to 00100101(b) <=> 37(d) )
- * @param u : the uchar to reverse
- * @return an uchar with the bits of u reversed
- */
-uchar reverseUcharBits(uchar u);
-
-/**
  * @brief Compute the morton code of a 3*8 bits color (interleaving the 24 bits into an unsigned int)
  * @param bgr : the input color
  * @return the morton code of the input color
  */
-unsigned int getColorMortonCode(const cv::Vec3b& bgr);
+unsigned int getMortonCodeFromColor(const cv::Vec3b& bgr);
 
 /**
- * @brief Create a color palette to show quantization on
+ * @brief Compute the color from a morton code (deinterleave 24 bits into 3*8 bits)
+ * @param bgr : the input mortonCode
+ * @return the color corresponding to the morton code
+ */
+cv::Vec3b getColorFromMortonCode(const unsigned int mortonCode);
+
+/**
+ * @brief Create a demo color palette to show quantization on
  * @param widthHeight the width/height of the image
  * @return a palette image
  */

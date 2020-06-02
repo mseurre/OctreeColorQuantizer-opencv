@@ -3,33 +3,28 @@
 
 #include <opencv2/core/matx.hpp>
 
-/**
- * @brief The OctreeNode class which implements the octree mechanisms
- */
-class OctreeNode
+namespace impl
 {
-public:
+
+/**
+ * @brief The OctreeNode struct represents an element of an Octree.
+ */
+struct OctreeNode
+{
     OctreeNode();
     ~OctreeNode();
 
     /**
-     * @brief Insert a color into a node
-     * @param color : the color to insert
+     * @brief Add a child and update the active child count
+     * @param childIdx : the index of the child to add
      */
-    void insertColor(const cv::Vec3b& color);
+    void addChild(const uchar childIdx);
 
     /**
-     * @brief Get the quantized equivalent of a color
-     * @param color : the color which quantized equivalent to return
-     * @return the quantized color
+     * @brief Add a color to a node and increment the color counter
+     * @param color : the color to add
      */
-    cv::Vec3b getQuantizedColor(const cv::Vec3b& color) const;
-
-    /**
-     * @brief Get a vector of all active childs of a node (including the childs of the childs, etc)
-     * @return a vector of OctreeNode pointers
-     */
-    std::vector<OctreeNode*> getActiveChildsPtrs() const;
+    void addColor(const cv::Vec3b& color);
 
     /**
      * @brief Compute the average color of a node (colorSum / colorCount)
@@ -38,38 +33,18 @@ public:
     cv::Vec3b getAverageColor() const;
 
     /**
-     * @brief Get the color count of a node
-     * @return the color count
+     * @brief Recursively fill a vector with each leaf's color
+     * @param colors : the vector of leaf colors
      */
-    unsigned int getCount() const;
+    void getLeafsColor(std::vector<cv::Vec3b>& colors) const;
 
-    /**
-     * @brief Set whether or not a node's color is part of the quantized palette
-     * @param inPalette : True if it is, false otherwise
-     */
-    void setInPalette(const bool inPalette);
-
-private:
-    bool m_inPalette;
-    unsigned int m_colorCount;
+    std::array<OctreeNode*, 8> m_childPtrs;
+    unsigned long m_colorCount;
     cv::Vec3f m_colorSum;
-    std::array<OctreeNode*, 8> m_childs;
-
-    /**
-     * @brief Implementation of the color insertion algorithm (recursive)
-     * @param color : the color to insert
-     * @param mortonCode : the morton code of the color to insert
-     * @param currentDepth : the current depth of insertion of the color
-     */
-    void insertColor(const cv::Vec3b& color, const unsigned int mortonCode, const uchar currentDepth = 0);
-
-    /**
-     * @brief Implementation of the color fetch algorithm (recursive)
-     * @param mortonCode : the morton code of the color to fetch
-     * @param currentDepth : the current depth of fetch
-     * @return the quantized color found the location given by the morton code
-     */
-    cv::Vec3b getQuantizedColor(const unsigned int mortonCode, const uchar currentDepth = 0) const;
+    uchar m_activeChildCount;
+    bool m_leaf;
 };
+
+}
 
 #endif // OCTREENODE_HPP

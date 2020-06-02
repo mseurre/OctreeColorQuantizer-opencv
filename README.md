@@ -1,7 +1,7 @@
 # OctreeColorQuantizer-opencv
 Color quantization of images using octrees (implemented in C++ with OpenCV)
 
-# Implementation details
+### Implementation details
 This implementation:
 - relies on morton codes to compute indexes of colors inside the tree (bit manipulation involved),
 - is based on recursivity for inserting and getting colors inside the tree,

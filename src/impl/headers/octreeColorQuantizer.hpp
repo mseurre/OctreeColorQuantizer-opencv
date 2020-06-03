@@ -2,6 +2,8 @@
 #define OCTREECOLORQUANTIZER_HPP
 
 #include "octree.hpp"
+#include <opencv2/core/utility.hpp>
+
 
 /**
  * @brief The OctreeColorQuantizer class is the interface between the image and the color quantization
@@ -38,6 +40,8 @@ public:
      * @return the image of the color palette
      */
     cv::Mat getPaletteImage() const;
+
+    unsigned long getPaletteSize() const;
 
 private:
     impl::Octree m_octree;

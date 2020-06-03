@@ -27,17 +27,16 @@ void Octree::makePalette(const unsigned long paletteSize)
     }
 
     resetPalette();
-    unsigned long totalLeafs = m_nodePtrsArray[MAX_DEPTH - 1].size();
 
     for (uchar depth = MAX_DEPTH - 2; depth > 0; depth--)
     {
         for (unsigned long nodeIdx = 0; nodeIdx < m_nodePtrsArray[depth].size(); nodeIdx++)
         {
-            if (totalLeafs <= paletteSize)
+            if (m_currentPaletteSize <= paletteSize)
                 return;
 
             m_nodePtrsArray[depth][nodeIdx]->m_leaf = true;
-            totalLeafs -= (m_nodePtrsArray[depth][nodeIdx]->m_activeChildCount - 1);
+            m_currentPaletteSize -= (m_nodePtrsArray[depth][nodeIdx]->m_activeChildCount - 1);
         }
     }
 }
@@ -47,6 +46,8 @@ void Octree::resetPalette()
     for (uchar i = 0; i < MAX_DEPTH; i++)
         for (OctreeNode* nPtr : m_nodePtrsArray[i])
             nPtr->m_leaf = (i == MAX_DEPTH - 1);
+
+    m_currentPaletteSize = m_nodePtrsArray[MAX_DEPTH - 1].size();
 }
 
 std::vector<cv::Vec3b> Octree::getPaletteColors() const
@@ -54,6 +55,11 @@ std::vector<cv::Vec3b> Octree::getPaletteColors() const
     std::vector<cv::Vec3b> paletteColors;
     m_root.getLeafsColor(paletteColors);
     return paletteColors;
+}
+
+unsigned long Octree::getPaletteSize() const
+{
+    return m_currentPaletteSize;
 }
 
 void Octree::insertColor(const unsigned int mortonCode, OctreeNode& node, const uchar currentDepth)

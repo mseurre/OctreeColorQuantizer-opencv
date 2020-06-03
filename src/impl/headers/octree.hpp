@@ -44,10 +44,13 @@ public:
      */
     std::vector<cv::Vec3b> getPaletteColors() const;
 
+    unsigned long getPaletteSize() const;
+
 private:
     OctreeNode m_root;
     std::array<std::vector<OctreeNode*>, MAX_DEPTH> m_nodePtrsArray;
     bool m_nodesSorted;
+    unsigned long m_currentPaletteSize;
 
     /**
      * @brief Implementation of the color insertion algorithm (recursive)
